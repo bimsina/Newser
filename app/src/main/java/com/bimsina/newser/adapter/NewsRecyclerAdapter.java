@@ -2,9 +2,11 @@ package com.bimsina.newser.adapter;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -13,25 +15,28 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bimsina.newser.R;
+import com.bimsina.newser.activity.NewsWebActivity;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
 public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapter.ViewHolder> {
     Context mContext;
-    private ArrayList<String> titleArray,descriptionArray,authorArray,urlToArticleArray,urlToImageArray;
+    private ArrayList<String> titleArray,authorArray,urlToArticleArray,urlToImageArray,sourceId;
     public NewsRecyclerAdapter(){}
 
-    public NewsRecyclerAdapter(Context mContext,ArrayList<String> titleArray,ArrayList<String> descriptionArray
-            ,ArrayList<String> authorArray,ArrayList<String> urlToArticleArray,ArrayList<String> urlToImageArray){
+    public NewsRecyclerAdapter(Context mContext,ArrayList<String> titleArray,
+                               ArrayList<String> authorArray,ArrayList<String> urlToArticleArray,
+                               ArrayList<String> urlToImageArray,ArrayList<String> sourceId){
         this.mContext = mContext;
         this.titleArray  = titleArray;
-        this.descriptionArray = descriptionArray;
         this.authorArray = authorArray;
         this.urlToArticleArray = urlToArticleArray;
         this.urlToImageArray = urlToImageArray;
+        this.sourceId = sourceId;
     }
     @NonNull
     @Override
@@ -42,14 +47,26 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder viewHolder, final int position) {
+        viewHolder.setIsRecyclable(true);
         viewHolder.newsTitle.setText(String.valueOf(titleArray.get(position)));
 //        viewHolder.newsDescription.setText(String.valueOf(descriptionArray.get(position)));
         viewHolder.newsAuthor.setText(String.valueOf(authorArray.get(position)));
         String imageUrl = urlToImageArray.get(position);
-        Glide.with(mContext)
-                .load(imageUrl).into(viewHolder.newsImage);
 
+        Glide.with(mContext)
+                .load(imageUrl)
+                .into(viewHolder.newsImage);
+
+        viewHolder.constraintLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext,NewsWebActivity.class);
+                intent.putExtra("webUrl",urlToArticleArray.get(position));
+                mContext.startActivity(intent);
+                //Toast.makeText(mContext,"Clicked",Toast.LENGTH_SHORT).show();
+            }
+        });
         viewHolder.menuImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,12 +82,15 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
                     window.setGravity(Gravity.BOTTOM);
                     window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 }
+                TextView openSource = myDialog.findViewById(R.id.open_in_new_text);
+                TextView openSource2 = myDialog.findViewById(R.id.open_in_new_text2);
 
-
+                openSource.setText(String.valueOf(authorArray.get(position)));
+                openSource2.setText(String.valueOf(authorArray.get(position)));
                 myDialog.show();
-
             }
         });
+
 
     }
 
@@ -81,6 +101,7 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
+        ConstraintLayout constraintLayout;
         TextView newsTitle,newsDescription,newsAuthor;
         ImageView newsImage,menuImage;
 
@@ -91,6 +112,7 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
             newsAuthor = itemView.findViewById(R.id.newsAuthor);
             newsImage = itemView.findViewById(R.id.newsImage);
             menuImage = itemView.findViewById(R.id.menuImage);
+            constraintLayout = itemView.findViewById(R.id.newsCard);
         }
     }
 }

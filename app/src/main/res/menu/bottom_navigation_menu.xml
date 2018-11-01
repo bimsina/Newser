@@ -3,11 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/item1"
-        android:icon="@drawable/ic_share"
-        android:title="Item1"
+        android:id="@+id/nav_home"
+        android:icon="@drawable/ic_home"
+        android:title="@string/home"
         />
-    <item android:id="@+id/item2"
+    <item android:id="@+id/nav_trending"
         android:icon="@drawable/ic_savefor_later"
-        android:title="Item2"/>
+        android:title="@string/trending"/>
+
+    <item android:id="@+id/nav_saved"
+        android:icon="@drawable/ic_savefor_later"
+        android:title="@string/saved"/>
+
 </menu>

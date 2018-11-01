@@ -1,6 +1,16 @@
 package com.bimsina.newser.adapter;
 
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
+import android.view.View;
+import android.view.Window;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+
+import com.bimsina.newser.R;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -8,6 +18,21 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class DownloadTask extends AsyncTask<String, Void, String> {
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+    }
+
+    @Override
+    protected void onPostExecute(String s) {
+        super.onPostExecute(s);
+    }
+
+    @Override
+    protected void onProgressUpdate(Void... values) {
+        super.onProgressUpdate(values);
+    }
 
     @Override
     protected String doInBackground(String... strings) {
