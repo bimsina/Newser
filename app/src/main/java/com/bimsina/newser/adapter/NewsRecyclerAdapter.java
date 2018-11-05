@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,12 +20,15 @@ import android.widget.Toast;
 
 import com.bimsina.newser.R;
 import com.bimsina.newser.activity.NewsWebActivity;
+import com.bimsina.newser.modal_class.News;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapter.ViewHolder> {
     Context mContext;
+    private List<News> newsList;
     private ArrayList<String> titleArray,authorArray,urlToArticleArray,urlToImageArray,sourceId;
     public NewsRecyclerAdapter(){}
 
@@ -38,6 +42,10 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
         this.urlToImageArray = urlToImageArray;
         this.sourceId = sourceId;
     }
+
+    public NewsRecyclerAdapter(List<News> newsList){
+        this.newsList = newsList;
+    }
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -49,22 +57,26 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder viewHolder, final int position) {
         viewHolder.setIsRecyclable(true);
-        viewHolder.newsTitle.setText(String.valueOf(titleArray.get(position)));
+        viewHolder.newsTitle.setText(newsList.get(position).getTitle());
 //        viewHolder.newsDescription.setText(String.valueOf(descriptionArray.get(position)));
-        viewHolder.newsAuthor.setText(String.valueOf(authorArray.get(position)));
-        String imageUrl = urlToImageArray.get(position);
+        viewHolder.newsAuthor.setText(newsList.get(position).getAuthor());
+        String imageUrl = newsList.get(position).getUrlToImage();
 
-        Glide.with(mContext)
-                .load(imageUrl)
-                .into(viewHolder.newsImage);
-
+        if (imageUrl.equals("null")){
+            viewHolder.newsImage.setImageResource(R.mipmap.ic_launcher);
+        }else {
+            Glide.with(newsList.get(position).getContext())
+                    .load(imageUrl)
+                    .into(viewHolder.newsImage);
+        }
         viewHolder.constraintLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext,NewsWebActivity.class);
-                intent.putExtra("webUrl",urlToArticleArray.get(position));
-                mContext.startActivity(intent);
-                //Toast.makeText(mContext,"Clicked",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(newsList.get(position).getContext(),NewsWebActivity.class);
+                intent.putExtra("webUrl",newsList.get(position).getUrlToArticle());
+                intent.putExtra("imageUrl",newsList.get(position).getUrlToImage());
+                intent.putExtra("title",newsList.get(position).getTitle());
+                newsList.get(position).getContext().startActivity(intent);
             }
         });
         viewHolder.menuImage.setOnClickListener(new View.OnClickListener() {
@@ -72,7 +84,7 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
             public void onClick(View v) {
 
                 Dialog myDialog;
-                myDialog = new Dialog(mContext);
+                myDialog = new Dialog(newsList.get(position).getContext());
                 myDialog.setContentView(R.layout.popup_menu);
                 Window window = myDialog.getWindow();
 
@@ -85,8 +97,8 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
                 TextView openSource = myDialog.findViewById(R.id.open_in_new_text);
                 TextView openSource2 = myDialog.findViewById(R.id.open_in_new_text2);
 
-                openSource.setText(String.valueOf(authorArray.get(position)));
-                openSource2.setText(String.valueOf(authorArray.get(position)));
+                openSource.setText(String.valueOf(newsList.get(position).getAuthor()));
+                openSource2.setText(String.valueOf(newsList.get(position).getAuthor()));
                 myDialog.show();
             }
         });
@@ -96,7 +108,7 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
 
     @Override
     public int getItemCount() {
-        return titleArray.size();
+        return newsList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

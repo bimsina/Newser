@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/nav_home"
-        android:icon="@drawable/ic_home"
-        android:title="@string/home"
+        android:id="@+id/nav_trending"
+        android:icon="@drawable/ic_trending"
+        android:title="@string/trending"
         />
-    <item android:id="@+id/nav_trending"
-        android:icon="@drawable/ic_savefor_later"
-        android:title="@string/trending"/>
+    <item android:id="@+id/nav_category"
+        android:icon="@android:drawable/ic_dialog_dialer"
+        android:title="@string/category"/>
 
     <item android:id="@+id/nav_saved"
         android:icon="@drawable/ic_savefor_later"
